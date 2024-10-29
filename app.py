@@ -1,24 +1,9 @@
+
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-
-# Authentication
-def authenticate(username, password):
-    return username == "user" and password == "password123"
-
-# Sign-in / Login page
-def login_page():
-    st.title("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if authenticate(username, password):
-            st.session_state['authenticated'] = True
-            st.success("Login successful!")
-            st.rerun()
-        else:
-            st.error("Invalid credentials!")
 
 # Sidebar Navigation
 def sidebar():
@@ -33,11 +18,24 @@ def sidebar():
 
 # Home Page
 def home():
-    st.title("Loan Portfolio Risk Management")
-    st.write("Welcome to the loan portfolio risk management dashboard.")
-    st.write("Use the sidebar to navigate through different metrics.")
-    st.image("D:\SEM 7\PredixionAI\WhatsApp Image 2024-10-20 at 19.22.55_870b104f.jpg", caption="Proactive Metrics", use_column_width=True)
+    st.title("Loan Portfolio Risk Management - PredixionAI")
+    st.subheader("Building an Early Warning System (EWS) for Loan Defaults")
+    st.write("""
+    Welcome to PredixionAI's loan portfolio risk management dashboard. Our mission is to build an Early Warning System (EWS) to help Financial Information Users (FIUs) detect potential loan defaulters early. By identifying customers at risk of default, we aim to enhance data mapping and transaction tracking throughout the loan payment period. This proactive approach enables smoother data management and minimizes financial risks, empowering financial institutions to make informed decisions.     
+    
+     Explore different metrics in the sidebar to understand key risk indicators and monitor loan health.  
 
+    Welcome to the Loan Portfolio Early Warning System Dashboard. Our objective is to proactively monitor and manage loan risks by analyzing various key metrics. 
+    Acting as a Financial Information User (FIU), we focus on providing insights and early indicators for potential risks associated with loan portfolios.
+
+    The following metrics are being monitored:
+    - **Income Resilience**: Analyzes the stability of income sources of loan applicants to evaluate their capacity to meet financial obligations.
+    - **KYC Stability**: Verifies the validity and stability of Know Your Customer (KYC) data, which helps in maintaining accurate customer information.
+    - **Spending Propensity**: Examines the spending habits of loan applicants to understand their spending behavior and potential impact on loan repayment.
+    - **Risk Vigilance**: Monitors potential risk factors related to creditworthiness, income consistency, loan history, and market risks, to identify early signs of financial instability.
+
+    """)
+    
 # Income Resilience Page
 def income_resilience():
     st.title("Income Resilience")
@@ -84,24 +82,18 @@ def risk_vigilance():
 
 # Main function to handle app logic
 def main():
-    if 'authenticated' not in st.session_state:
-        st.session_state['authenticated'] = False
-    
-    if not st.session_state['authenticated']:
-        login_page()
-    else:
-        selected_page = sidebar()
+    selected_page = sidebar()
 
-        if selected_page == "Home":
-            home()
-        elif selected_page == "Income Resilience":
-            income_resilience()
-        elif selected_page == "KYC Stability":
-            kyc_stability()
-        elif selected_page == "Spending Propensity":
-            spending_propensity()
-        elif selected_page == "Risk Vigilance":
-            risk_vigilance()
+    if selected_page == "Home":
+        home()
+    elif selected_page == "Income Resilience":
+        income_resilience()
+    elif selected_page == "KYC Stability":
+        kyc_stability()
+    elif selected_page == "Spending Propensity":
+        spending_propensity()
+    elif selected_page == "Risk Vigilance":
+        risk_vigilance()
 
 if __name__ == "__main__":
     main()
