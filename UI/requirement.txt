@@ -1,0 +1,3 @@
+botocore
+streamlit_extras
+boto3
