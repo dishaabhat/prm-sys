@@ -59,11 +59,17 @@ def income_resilience():
     st.title("Income Resilience")
     st.write("Assessing the stability of income sources for loan risk management.")
     # Example data fetching from the user
-    salary_data = st.file_uploader("Upload Salary Data (CSV)", type=["csv"])
+    salary_data = st.file_uploader("Upload Salary Data (CSV or Excel )", type=["csv","xlsx"])
     if salary_data:
-        df = pd.read_csv(salary_data)
+        if salary_data.type == "text/csv":
+            df = pd.read_csv(salary_data)
+        elif salary_data.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            df = pd.read_excel(salary_data)
+        else:
+            st.error("Invalid file format. Please upload a CSV or Excel file.")
+            return
         st.write(df.head())
-        st.line_chart(df)
+        st.bar_chart(df)
 
 # KYC Stability Page
 def kyc_stability():
