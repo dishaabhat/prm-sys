@@ -1,5 +1,17 @@
 import streamlit as st
 
+
+# CSS to hide sidebar elements permanently
+hide_streamlit_style = """
+    <style>
+        [data-testid="stSidebarNav"] {
+            display: none;
+        }
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
 def display_income_resilience():
     st.title("Income Resilience")
     df = st.session_state.get('file_uploaded')

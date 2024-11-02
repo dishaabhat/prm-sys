@@ -25,6 +25,16 @@ if 'cog' not in st.session_state:
         client_id=os.getenv("CLIENT_ID"),
         client_secret=os.getenv("CLIENT_SECRET")
     )
+# To hide side bar items for safety of login and sign up
+hide_streamlit_style = """
+    <style>
+        [data-testid="stSidebarNav"] { 
+            display: none;
+        }
+    </style>
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Sidebar for navigation
 menu = st.sidebar.selectbox('Menu', ['Login', 'Sign Up'])
@@ -80,9 +90,16 @@ elif menu == 'Login':
             st.error(f"Error: {str(e)}")
 
 # Logout button
+# Logout button in sidebar
 if st.session_state.get("logged_in"):
-    if st.sidebar.button("Log out"):
-        st.session_state.logged_in = False
-        st.session_state.pop("username", None)
-        st.experimental_rerun()
+    logout_placeholder = st.empty()  # Create a placeholder
+    with logout_placeholder.container():
+        if st.sidebar.button("Log out"):
+            # Clear session and show message
+            st.session_state.logged_in = False
+            st.session_state.pop("username", None)
+            st.write("You have been logged out.")
+            if st.button("Go to Login"):
+                logout_placeholder.empty()  # Clear placeholder
+                st.experimental_rerun()  # Refresh the page to show login options
 

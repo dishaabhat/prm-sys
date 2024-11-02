@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-from pages import income_resilience, kyc_stability,risk_score,risk_vigilance,spending_propensity
+from pages import income_resilience, kyc_stability,risk_score,risk_vigilance,spending_propensity,home
 
 # Ensure the user is logged in
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
@@ -13,45 +13,68 @@ if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
 if 'file_uploaded' not in st.session_state:
     st.session_state['file_uploaded'] = None
 
-# Sidebar Navigation
+
+# # Sidebar Navigation with all 4 options visible
+# def sidebar():
+#     with st.sidebar:
+#         selected_page = option_menu(
+#             menu_title="Navigation",
+#             options=["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"],
+#             icons=["house", "graph-up", "shield-check", "wallet", "exclamation-circle","clipboard-data"],
+#             default_index=0,
+#         )
+#         # Add a Logout button
+#         logout_button = st.button("Logout")
+        
+#         # If logout button is clicked, clear session state and reload page
+#         if logout_button:
+#             # Clear login session state
+#             st.session_state['logged_in'] = False
+            
+#             # Create an empty placeholder and clear content
+#             placeholder = st.empty()
+#             with placeholder.container():
+#                 st.write("You have been logged out.")
+#                 st.button("Go to Login", on_click=lambda: placeholder.empty())
+#     return selected_page
+
+
+# CSS to hide sidebar elements permanently
+hide_streamlit_style = """
+    <style>
+        [data-testid="stSidebarNav"] {
+            display: none;
+        }
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# Sidebar Navigation with DROPDOWN
 def sidebar():
     with st.sidebar:
-        selected_page = option_menu(
-            menu_title="Navigation",
-            options=["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"],
-            icons=["house", "graph-up", "shield-check", "wallet", "exclamation-circle","clipboard-data"],
-            default_index=0,
+        selected_page = st.selectbox(
+            "Navigation",
+            ["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"]
         )
+
         # Add a Logout button
         logout_button = st.button("Logout")
-        
+
         # If logout button is clicked, clear session state and reload page
         if logout_button:
             # Clear login session state
             st.session_state['logged_in'] = False
-            
-            # Create an empty placeholder and clear content
+            st.session_state.pop("username", None)
+
+            # Create an empty placeholder and reload the app
             placeholder = st.empty()
             with placeholder.container():
                 st.write("You have been logged out.")
-                st.button("Go to Login", on_click=lambda: placeholder.empty())
-    return selected_page
+                if st.button("Go to Login"):
+                    placeholder.empty()  # Clear the placeholder
+                    st.experimental_rerun()  # Refresh the page to show login options
 
-# Home Page
-def home():
-    st.title("Loan Portfolio Risk Management")
-    st.write("Welcome to the loan portfolio risk management dashboard.")
-    st.title("YAHA PE OR LIKHNA HAI. GIve description of what we are trying to do and stuff")
-    # Example data fetching from the user
-    salary_data = st.file_uploader("Upload Salary Data (CSV)", type=["csv","xlsx"])
-    
-    if salary_data:
-        if salary_data.type == "text/csv":
-            df = pd.read_csv(salary_data)
-        else:
-            df = pd.read_excel(salary_data)
-        st.session_state['file_uploaded'] = df  # Store the dataframe in session state
-        st.write("File successfully uploaded! Navigate to any page in the sidebar to start analysis.")
+    return selected_page
 
 
 # Main function to handle app logic
@@ -60,9 +83,7 @@ def main():
     selected_page = sidebar()
 
     if selected_page == "Home":
-        home()
-    # elif selected_page == "Access":
-    #     options.
+        home.display_home()  # Keep content for file upload in the Home page
     elif selected_page == "Income Resilience":
         income_resilience.display_income_resilience()
     elif selected_page == "KYC Stability":
