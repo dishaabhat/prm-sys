@@ -36,6 +36,38 @@ hide_streamlit_style = """
 
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+# Function to show the confirmation page
+def show_confirmation_page(email):
+    st.subheader('Confirm Your Account')
+    st.write(f"We have sent a code by email to {email}. Enter it below to confirm your account.")
+ 
+    verification_code = st.text_input('Verification Code',value='xxxxxx')
+ 
+    if st.button('Confirm Account'):
+        try:
+            verify_out = st.session_state.cog.confirm_user_sign_up(email, verification_code)
+            print(verify_out)
+            if verify_out:
+                st.success('Your account has been confirmed!')
+                # create_user_folder(email)
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+     # Arrange the "Didn’t receive a code?" text and button side by side
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.write("Didnt receive a code?")
+    with col2:
+        if st.button('Send a New Code'):
+            try:
+                st.session_state.cog.resend_confirmation(email)
+                verify_out = st.session_state.cog.confirm_user_sign_up(email, verification_code)
+                if verify_out:
+                    # create_user_folder(email)
+                    st.success('Your account has been confirmed!')
+                st.info('A new code has been sent.')
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+
 # Sidebar for navigation
 menu = st.sidebar.selectbox('Menu', ['Login', 'Sign Up'])
 
@@ -103,3 +135,6 @@ if st.session_state.get("logged_in"):
                 logout_placeholder.empty()  # Clear placeholder
                 st.experimental_rerun()  # Refresh the page to show login options
 
+# If there's an email in session state, go directly to the confirmation page
+if 'email' in st.session_state and menu != 'Login':
+    show_confirmation_page(st.session_state.email)
