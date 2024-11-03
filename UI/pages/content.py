@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-from pages import metrics,home
+from pages import metrics,home,about
 
 # Ensure the user is logged in
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
@@ -53,10 +53,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 def sidebar():
     with st.sidebar:
         selected_page = st.selectbox(
-            "Navigation",
-            # ["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"]
-            ["Home", "Metrics"]
-        )
+            "Menu",["📄 About", "🏠 Home", "📊 Metrics Calculation"] 
+          )
 
         # Add a Logout button
         logout_button = st.button("Logout")
@@ -80,24 +78,15 @@ def sidebar():
 
 # Main function to handle app logic
 def main():
-    
     selected_page = sidebar()
-
-    if selected_page == "Home":
+    if selected_page == "📄 About":
+        about.display_info()
+    elif selected_page == "🏠 Home":
         home.display_home()  # Keep content for file upload in the Home page
-    elif selected_page=="Metrics":
-        metrics.display_metrics()
-    # elif selected_page == "Income Resilience":
-    #     income_resilience.display_income_resilience()
-    # elif selected_page == "KYC Stability":
-    #     kyc_stability.display_kyc_stability()
-    # elif selected_page == "Spending Propensity":
-    #     spending_propensity.display_spending_propensity()
-    # elif selected_page == "Risk Vigilance":
-    #     risk_vigilance.display_risk_vigilance()
-    # elif selected_page == "Risk Score":
-    #     risk_score.display_risk_score()
-    
+    elif selected_page=="📊 Metrics Calculation":
+        metrics.display_metrics()  
 
+
+# Run the main function
 if __name__ == "__main__":
     main()

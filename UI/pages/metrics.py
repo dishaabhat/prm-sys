@@ -148,9 +148,36 @@ def display_metrics():
 
     # Calculate final risk score
     final_risk_score = (income_resilience_score + kyc_stability_score + spending_propensity_score + risk_vigilance_score) / 4
-    risk_category = "High" if final_risk_score >= 7 else "Medium" if final_risk_score >= 4 else "Low"
+    
+    # Determine risk category
+    if final_risk_score >= 7:
+        risk_category = "High"
+        response_message = (
+            "Your risk score is classified as High. Immediate action is recommended to lower risk exposure. \n"
+            "- Consider reducing debt-to-income ratio.\n"
+            "- Manage outstanding loans carefully.\n"
+            "- Build financial reserves.\n"
+            "- Increase income stability.\n"
+            "- Improve spending habits."
+        )
+    elif final_risk_score < 4:
+        risk_category = "Low"
+        response_message = (
+            "Your risk score is classified as Low. You are effectively managing financial risks and maintaining stability. \n"
+            "- Continue with your current financial practices to sustain this low-risk level.\n"
+            "- Consider further diversifying income and investments to enhance long-term resilience."
+        )
+    else:
+        risk_category = "Medium"
+        response_message = (
+            "Your risk score is classified as Medium. You are moderately managing your financial risks, but there is room for improvement. \n"
+            "- Focus on stabilizing income sources.\n"
+            "- Maintain on-time bill payments.\n"
+            "- Limit high expenses.\n"
+            "- Improving financial stability now can help prevent future high-risk situations."
+        )
 
-    # Display all metric scores
+        # Display all metric scores
     st.write("### Metric Scores:")
     st.write("Income Resilience Score (out of 10):", income_resilience_score)
     st.write("KYC Stability Score (out of 10):", kyc_stability_score)
@@ -159,6 +186,9 @@ def display_metrics():
     st.write("### Final Risk Score and Category:")
     st.write("Final Risk Score (out of 10):", final_risk_score)
     st.write("Risk Category:", risk_category)
+    st.write("### Recommendations:")
+    st.markdown(response_message)
+
 
     # Store all scores in session state if needed for reference on other pages
     st.session_state.income_resilience_score = income_resilience_score
