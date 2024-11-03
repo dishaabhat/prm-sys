@@ -151,7 +151,7 @@ def display_metrics():
     
     # Determine risk category
     if final_risk_score >= 7:
-        risk_category = "High"
+        risk_category = "**High**"
         response_message = (
             "Your risk score is classified as **High**. Immediate action is recommended to lower risk exposure:\n"
             "- Build financial reserves.\n"
@@ -162,7 +162,7 @@ def display_metrics():
         )
 
     elif final_risk_score < 4:
-        risk_category = "Low"
+        risk_category = "**Low**"
         response_message = (
             "Your risk score is classified as **Low**. You are effectively managing financial risks:\n"
             "- **Continue with current practices** to sustain this low-risk level. Explore [OECD Financial Resilience Guide](https://www.oecd.org/finance/financial-education/).\n"
@@ -171,7 +171,7 @@ def display_metrics():
         )
 
     else:
-        risk_category = "Medium"
+        risk_category = "**Medium**"
         response_message = (
             "Your risk score is classified as **Medium**. You are moderately managing your financial risks but there is room for improvement:\n"
             "- **Stabilize income sources** and **maintain on-time bill payments.** Refer to the [Federal Reserve Financial Stability Report](https://www.federalreserve.gov/publications/financial-stability-report.htm).\n"
