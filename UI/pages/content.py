@@ -49,8 +49,14 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+logo_url = "https://predixion.ai/assets/images/image04.png?v=565f5e96"
+st.sidebar.image(logo_url, width=75)
+# st.logo("https://predixion.ai/assets/images/image04.png?v=565f5e96",size="large",width = 75)
+
+
 # Sidebar Navigation with DROPDOWN
 def sidebar():
+    
     with st.sidebar:
         selected_page = st.selectbox(
             "Menu",["📄 About", "🏠 Home", "📊 Metrics Calculation"] 
