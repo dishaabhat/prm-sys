@@ -41,7 +41,7 @@ def show_confirmation_page(email):
     st.subheader('Confirm Your Account')
     st.write(f"We have sent a code by email to {email}. Enter it below to confirm your account.")
  
-    verification_code = st.text_input('Verification Code',value='xxxxxx')
+    verification_code = st.text_input('Verification Code',placeholder="Enter the OTP")
  
     if st.button('Confirm Account'):
         try:
