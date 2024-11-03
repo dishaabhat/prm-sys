@@ -12,17 +12,21 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Home Page
+import streamlit as st
+import pandas as pd
+
+@st.cache_data
+def load_data(file):
+    if file.type == "text/csv":
+        return pd.read_csv(file)
+    else:
+        return pd.read_excel(file)
+
 def display_home():
-    st.title("Loan Portfolio Risk Management")
-    st.write("Welcome to the loan portfolio risk management dashboard.")
-    st.title("YAHA PE OR LIKHNA HAI. GIve description of what we are trying to do and stuff")
-    # Example data fetching from the user
-    salary_data = st.file_uploader("Upload Salary Data (CSV)", type=["csv","xlsx"])
+    st.title("Home - Upload File")
+    salary_data = st.file_uploader("Upload Salary Data (CSV)", type=["csv", "xlsx"])
     
     if salary_data:
-        if salary_data.type == "text/csv":
-            df = pd.read_csv(salary_data)
-        else:
-            df = pd.read_excel(salary_data)
-        st.session_state['file_uploaded'] = df  # Store the dataframe in session state
+        df = load_data(salary_data)
+        st.session_state['file_uploaded'] = df  # Store in session state
         st.write("File successfully uploaded! Navigate to any page in the sidebar to start analysis.")

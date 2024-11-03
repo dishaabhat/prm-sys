@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-from pages import income_resilience, kyc_stability,risk_score,risk_vigilance,spending_propensity,home
+from pages import metrics,home
 
 # Ensure the user is logged in
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
@@ -54,7 +54,8 @@ def sidebar():
     with st.sidebar:
         selected_page = st.selectbox(
             "Navigation",
-            ["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"]
+            # ["Home", "Income Resilience", "KYC Stability", "Spending Propensity", "Risk Vigilance","Risk Score"]
+            ["Home", "Metrics"]
         )
 
         # Add a Logout button
@@ -84,16 +85,19 @@ def main():
 
     if selected_page == "Home":
         home.display_home()  # Keep content for file upload in the Home page
-    elif selected_page == "Income Resilience":
-        income_resilience.display_income_resilience()
-    elif selected_page == "KYC Stability":
-        kyc_stability.display_kyc_stability()
-    elif selected_page == "Spending Propensity":
-        spending_propensity.display_spending_propensity()
-    elif selected_page == "Risk Vigilance":
-        risk_vigilance.display_risk_vigilance()
-    elif selected_page == "Risk Score":
-        risk_score.display_risk_score()
+    elif selected_page=="Metrics":
+        metrics.display_metrics()
+    # elif selected_page == "Income Resilience":
+    #     income_resilience.display_income_resilience()
+    # elif selected_page == "KYC Stability":
+    #     kyc_stability.display_kyc_stability()
+    # elif selected_page == "Spending Propensity":
+    #     spending_propensity.display_spending_propensity()
+    # elif selected_page == "Risk Vigilance":
+    #     risk_vigilance.display_risk_vigilance()
+    # elif selected_page == "Risk Score":
+    #     risk_score.display_risk_score()
+    
 
 if __name__ == "__main__":
     main()
