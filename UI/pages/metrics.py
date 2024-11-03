@@ -153,28 +153,30 @@ def display_metrics():
     if final_risk_score >= 7:
         risk_category = "High"
         response_message = (
-            "Your risk score is classified as High. Immediate action is recommended to lower risk exposure. \n"
-            "- Consider reducing debt-to-income ratio.\n"
-            "- Manage outstanding loans carefully.\n"
+            "Your risk score is classified as **High**. Immediate action is recommended to lower risk exposure:\n"
             "- Build financial reserves.\n"
-            "- Increase income stability.\n"
             "- Improve spending habits."
+            "- **Consider reducing debt-to-income ratio.** For guidance, refer to [Consumer Finance Debt Management](https://www.consumerfinance.gov/consumer-tools/debt/).\n"
+            "- **Manage outstanding loans carefully** and **build financial reserves.** See the [World Bank Guide on Financial Health](https://openknowledge.worldbank.org/handle/10986/34616).\n"
+            "- **Increase income stability** and **improve spending habits.** Watch the [Khan Academy Video on Managing High Financial Risks](https://www.youtube.com/watch?v=F7Bztf1f-6E).\n"
         )
+
     elif final_risk_score < 4:
         risk_category = "Low"
         response_message = (
-            "Your risk score is classified as Low. You are effectively managing financial risks and maintaining stability. \n"
-            "- Continue with your current financial practices to sustain this low-risk level.\n"
-            "- Consider further diversifying income and investments to enhance long-term resilience."
+            "Your risk score is classified as **Low**. You are effectively managing financial risks:\n"
+            "- **Continue with current practices** to sustain this low-risk level. Explore [OECD Financial Resilience Guide](https://www.oecd.org/finance/financial-education/).\n"
+            "- **Consider further diversifying income and investments** for resilience. Learn more from [Investopedia on Diversification](https://www.investopedia.com/terms/d/diversification.asp).\n"
+            "- Watch a video on [Low-Risk Investment Portfolios](https://www.youtube.com/watch?v=rcJwRxsoZC8) for additional tips.\n"
         )
+
     else:
         risk_category = "Medium"
         response_message = (
-            "Your risk score is classified as Medium. You are moderately managing your financial risks, but there is room for improvement. \n"
-            "- Focus on stabilizing income sources.\n"
-            "- Maintain on-time bill payments.\n"
-            "- Limit high expenses.\n"
-            "- Improving financial stability now can help prevent future high-risk situations."
+            "Your risk score is classified as **Medium**. You are moderately managing your financial risks but there is room for improvement:\n"
+            "- **Stabilize income sources** and **maintain on-time bill payments.** Refer to the [Federal Reserve Financial Stability Report](https://www.federalreserve.gov/publications/financial-stability-report.htm).\n"
+            "- **Limit high expenses** and **focus on financial stability.** Check out the [FDIC Financial Education Guide](https://www.fdic.gov/resources/financial-education/).\n"
+            "- Watch the [Economics Explained Video on Managing Medium Risks](https://www.youtube.com/watch?v=MIJk7MOxq1A).\n"
         )
 
         # Display all metric scores
