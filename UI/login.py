@@ -5,7 +5,6 @@ import boto3
 from streamlit_extras.switch_page_button import switch_page
 import os
 
-
 # # Configure AWS client
 # cognito_client = boto3.client(
 #     'cognito-idp',
@@ -44,52 +43,6 @@ if 'cog' not in st.session_state:
         client_id=os.getenv("CLIENT_ID"),
         client_secret=os.getenv("CLIENT_SECRET")
     )
-# To hide side bar items for safety of login and sign up
-hide_streamlit_style = """
-    <style>
-        [data-testid="stSidebarNav"] { 
-            display: none;
-        }
-    </style>
-"""
-
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
-logo_url = "https://predixion.ai/assets/images/image04.png?v=565f5e96"
-st.sidebar.image(logo_url, width=75)
-
-# Function to show the confirmation page
-def show_confirmation_page(email):
-    st.subheader('Confirm Your Account')
-    st.write(f"We have sent a code by email to {email}. Enter it below to confirm your account.")
- 
-    verification_code = st.text_input('Verification Code',placeholder="Enter the OTP")
- 
-    if st.button('Confirm Account'):
-        try:
-            verify_out = st.session_state.cog.confirm_user_sign_up(email, verification_code)
-            print(verify_out)
-            if verify_out:
-                st.success('Your account has been confirmed!')
-                # create_user_folder(email)
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
-     # Arrange the "Didn’t receive a code?" text and button side by side
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.write("Didnt receive a code?")
-    with col2:
-        if st.button('Send a New Code'):
-            try:
-                st.session_state.cog.resend_confirmation(email)
-                verify_out = st.session_state.cog.confirm_user_sign_up(email, verification_code)
-                if verify_out:
-                    # create_user_folder(email)
-                    st.success('Your account has been confirmed!')
-                st.info('A new code has been sent.')
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
 
 # To hide sidebar items for safety of login and sign up
 hide_streamlit_style = """
@@ -184,7 +137,6 @@ elif menu == 'Login':
             st.error(f"Error: {str(e)}")
 
 # Logout button
-# Logout button in sidebar
 if st.session_state.get("logged_in"):
     logout_placeholder = st.empty()  # Create a placeholder
     with logout_placeholder.container():
@@ -199,8 +151,4 @@ if st.session_state.get("logged_in"):
 
 # If there's an email in session state, go directly to the confirmation page
 if 'email' in st.session_state and menu != 'Login':
-<<<<<<< HEAD
     show_confirmation_page(st.session_state.email)
-=======
-    show_confirmation_page(st.session_state.email)
->>>>>>> e5380fd (Updated UI folder with new files and changes)
