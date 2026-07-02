@@ -22,6 +22,15 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 if "data_source" not in st.session_state:
     st.session_state.data_source = None
 
+if "accounts_loaded" not in st.session_state:
+    st.session_state.accounts_loaded = False
+
+if "data_loaded" not in st.session_state:
+    st.session_state.data_loaded = False
+
+if "selected_bank" not in st.session_state:
+    st.session_state.selected_bank = None
+
 # Home Page
 def display_home():
     st.title("Loan Portfolio Risk Management")
@@ -37,53 +46,78 @@ def display_home():
         st.session_state.file_uploaded = None
 
     # Consent-based data access section
-    st.header("Access Data by Giving Consent")
-    with st.spinner("Fetching active bank accounts associated with your email..."):
-        time.sleep(3)
-    selected_bank = st.radio("Following active accounts found, select a bank to share data:", banks, index=0)
+    if st.session_state.file_uploaded is None:
+        st.header("Access Data by Giving Consent")
+        if not st.session_state.accounts_loaded:
+            with st.spinner("Fetching active bank accounts associated with your email..."):
+                time.sleep(3)
 
-    if selected_bank and not st.session_state.initial_consent:
-        st.write(f"You have selected *{selected_bank}*.")
-        if st.button("Request Consent to Access Data"):
-            st.session_state.initial_consent = True
+            st.session_state.accounts_loaded = True
 
-    # Step 3: Confirm data sharing consent
-    if st.session_state.initial_consent and not st.session_state.final_consent:
-        st.write("To access your account data for risk assessment purposes, please provide your consent.")
-        confirm = st.checkbox("I consent to share my account data for risk calculation.")
-        if confirm:
-            st.session_state.final_consent = True
+        selected_bank = st.radio("Following active accounts found, select a bank to share data:", banks, index=0)
+        st.session_state.selected_bank = selected_bank
 
-    # Step 4: Final confirmation and data retrieval
-    if st.session_state.final_consent:
-        st.warning("You are about to share sensitive financial data. Please confirm to proceed.")
-        if st.button("Confirm and Share Data"):
-            # Fetch and display the data upon final confirmation
-            try:
-                data = get_data()
-                df = pd.DataFrame(data)
+        if selected_bank and not st.session_state.initial_consent:
+            st.write(f"You have selected *{selected_bank}*.")
+            if st.button("Request Consent to Access Data"):
+                st.session_state.initial_consent = True
 
-                with st.spinner("Data is being retrieved right now..."):
-                    time.sleep(3)
+        # Step 3: Confirm data sharing consent
+        if st.session_state.initial_consent and not st.session_state.final_consent:
+            st.write("To access your account data for risk assessment purposes, please provide your consent.")
+            confirm = st.checkbox("I consent to share my account data for risk calculation.")
+            if confirm:
+                st.session_state.final_consent = True
 
-                st.success("Consent given. Data retrieved successfully.")
-                st.write(f"Data for *{selected_bank}*:")
-                st.dataframe(df)
+        # Step 4: Final confirmation and data retrieval
+        if st.session_state.final_consent:
+            st.warning("You are about to share sensitive financial data. Please confirm to proceed.")
+            if st.button("Confirm and Share Data"):
 
-                st.session_state.file_uploaded = df
-                st.session_state.data_source = "consent"
+                try:
+                    if not st.session_state.data_loaded:
+                        with st.spinner("Data is being retrieved right now..."):
+                            time.sleep(3)
 
-                st.write("Data has been stored. You can navigate to any page to start analysis.")
+                            data = get_data()
+                            df = pd.DataFrame(data)
 
-                st.session_state.initial_consent = False
-                st.session_state.final_consent = False
+                            st.session_state.file_uploaded = df
+                            st.session_state.data_loaded = True
 
-                display_visualizations()
+                    st.session_state.data_source = "consent"
 
-            except Exception as e:
-                st.error(f"Unable to load transaction data.\n\n{e}")
+                    st.session_state.initial_consent = False
+                    st.session_state.final_consent = False
+
+                    st.success("Consent given. Data retrieved successfully.")
+
+                except Exception as e:
+                    st.error(f"Unable to load transaction data.\n\n{e}")
+        
     
-    st.markdown("---")
+    if st.session_state.file_uploaded is not None:
+
+        st.write(f"Data for **{st.session_state.selected_bank}**:")
+        st.dataframe(st.session_state.file_uploaded,use_container_width=True)
+        
+        st.write("Data has been stored. You can navigate to any page to start analysis.")
+        display_visualizations()
+
+        st.markdown("---")
+
+        if st.button("Load Data for Another Bank"):
+
+            prepare_dashboard.clear()
+
+            st.session_state.file_uploaded = None
+            st.session_state.initial_consent = False
+            st.session_state.final_consent = False
+            st.session_state.accounts_loaded = False
+            st.session_state.data_loaded = False
+            st.session_state.selected_bank = None
+
+            st.rerun()
 
     # Direct file upload section
     # st.header("Or Upload Your Financial Data Directly")
@@ -100,63 +134,78 @@ def display_home():
     #     st.success("File uploaded successfully! Navigate to any page to start analysis.")
     #     st.dataframe(df)  # Display uploaded data for quick verification
 
+@st.cache_data
+def prepare_dashboard(df):
+    data = df.copy()
+
+    data["Date"] = pd.to_datetime(data["Date"], errors="coerce")
+    data["Month_Year"] = data["Date"].dt.to_period("M")
+    data["Amount"] = pd.to_numeric(data["Amount"], errors="coerce")
+
+    monthly_data = data.groupby("Month_Year")["Amount"]
+
+    monthly_income = monthly_data.apply(lambda x: x[x > 0].sum())
+    monthly_expenses = monthly_data.apply(lambda x: -x[x < 0].sum())
+
+    monthly_df = pd.DataFrame({
+        "Income": monthly_income,
+        "Expenses": monthly_expenses
+    }).reset_index()
+
+    monthly_df["Month_Year"] = monthly_df["Month_Year"].dt.to_timestamp()
+
+    return monthly_df, data
+
+
 def display_visualizations():
-    # Convert Date column to datetime and extract month-year for grouping
-    data = st.session_state.file_uploaded
-    
-    if data is not None:
-        data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
-        data['Month_Year'] = data['Date'].dt.to_period('M')
 
-        # Prepare data for monthly income and expenses
-        data['Amount'] = pd.to_numeric(data['Amount'], errors='coerce')
-        monthly_data = data.groupby('Month_Year')['Amount']
-        monthly_income = monthly_data.apply(lambda x: x[x > 0].sum())
-        monthly_expenses = monthly_data.apply(lambda x: -x[x < 0].sum())
-        monthly_df = pd.DataFrame({
-            'Income': monthly_income,
-            'Expenses': monthly_expenses
-        }).reset_index()
-        monthly_df['Month_Year'] = monthly_df['Month_Year'].dt.to_timestamp()
+    monthly_df, data = prepare_dashboard(st.session_state.file_uploaded)
+    # Dropdown selector for time range at the top
+    st.header("Financial Dashboard")
+    time_range = st.selectbox("Select Time Range", ["6 Months", "3 Months", "2 Months", "1 Month"], index=0,key="dashboard_time_range")
+    months = int(time_range.split()[0]) 
 
-        # Dropdown selector for time range at the top
-        st.title("Financial Dashboard")
-        time_range = st.selectbox("Select Time Range", ["6 Months", "3 Months", "2 Months", "1 Month"], index=0)
-        months = int(time_range.split()[0]) 
+    # Filter data based on selected time range
+    filtered_df = monthly_df.tail(months)
+    filtered_df = filtered_df.copy()
+    if filtered_df.empty:
+        st.warning("No data available for the selected time range.")
+        return
+    filtered_data = data[data['Date'] >= filtered_df['Month_Year'].min()]
 
-        # Filter data based on selected time range
-        filtered_df = monthly_df.tail(months)
-        filtered_data = data[data['Date'] >= filtered_df['Month_Year'].min()]
-
-        # Monthly Income vs Expenses chart
-        st.subheader("Monthly Income vs Expenses")
-        fig1 = px.line(filtered_df, x='Month_Year', y=['Income', 'Expenses'], 
+    # Monthly Income vs Expenses chart
+    st.subheader("Monthly Income vs Expenses")
+    fig1 = px.line(filtered_df, x='Month_Year', y=['Income', 'Expenses'], 
                        title=f'Income vs Expenses - Last {months} Month(s)',
                        labels={'value': 'Amount', 'variable': 'Category'}, markers=True)
-        st.plotly_chart(fig1)
+    st.plotly_chart(fig1,use_container_width=True)
 
         # Savings Rate Over Time chart
-        st.subheader("Savings Rate Over Time")
-        filtered_df['Savings Rate'] = ((filtered_df['Income'] - filtered_df['Expenses']) / filtered_df['Income']) * 100
-        fig2 = px.line(filtered_df, x='Month_Year', y='Savings Rate', title="Monthly Savings Rate (%)")
-        st.plotly_chart(fig2)
+    st.subheader("Savings Rate Over Time")
+    filtered_df['Savings Rate'] = ((filtered_df['Income'] - filtered_df['Expenses']) / filtered_df['Income']) * 100
+    fig2 = px.line(filtered_df, x='Month_Year', y='Savings Rate', title="Monthly Savings Rate (%)")
+    st.plotly_chart(fig2,use_container_width=True)
 
-        # Expense Stability Over Time chart
-        st.subheader("Expense Stability Over Time")
-        expense_stability = filtered_df['Expenses'].std() / filtered_df['Expenses'].mean() * 100
-        fig3 = px.line(filtered_df, x='Month_Year', y='Expenses', title=f'Expense Stability Score: {expense_stability:.2f}%')
-        st.plotly_chart(fig3)
+    # Expense Stability Over Time chart
+    st.subheader("Expense Stability Over Time")
+    expense_stability = filtered_df['Expenses'].std() / filtered_df['Expenses'].mean() * 100
+    fig3 = px.line(filtered_df, x='Month_Year', y='Expenses', title=f'Expense Stability Score: {expense_stability:.2f}%')
+    st.plotly_chart(fig3,use_container_width=True)
 
         # Average Transaction Size chart
-        st.subheader("Average Transaction Size")
-        average_transaction_size = filtered_df['Expenses'].sum() / len(data[data['Amount'] < 0])
-        fig6 = px.line(filtered_df, x='Month_Year', y='Expenses', title=f"Average Transaction Size: {average_transaction_size:.2f}")
-        st.plotly_chart(fig6)
+    st.subheader("Average Transaction Size")
+    negative_transactions = filtered_data[filtered_data["Amount"] < 0]
+    average_transaction_size = (negative_transactions["Amount"].abs().mean())
+    fig6 = px.line(filtered_df, x='Month_Year', y='Expenses', title=f"Average Transaction Size: {average_transaction_size:.2f}")
+    st.plotly_chart(fig6,use_container_width=True)
 
         # Expense Categories Breakdown chart
-        st.subheader("Expense Categories Breakdown")
-        expense_breakdown = filtered_data[filtered_data['Amount'] < 0]['Category'].value_counts()
-        fig_expense = px.pie(expense_breakdown, names=expense_breakdown.index, values=expense_breakdown.values,
+    st.subheader("Expense Categories Breakdown")
+
+
+    expense_breakdown = filtered_data[filtered_data['Amount'] < 0]['Category'].value_counts()
+    fig_expense = px.pie(expense_breakdown, names=expense_breakdown.index, values=expense_breakdown.values,
                              title=f"Expense Categories Breakdown - Last {months} Month(s)", hole=0.4)
-        fig_expense.update_traces(textinfo='percent+label')
-        st.plotly_chart(fig_expense, use_container_width=True)
+    fig_expense.update_traces(textinfo='percent+label')
+
+    st.plotly_chart(fig_expense, use_container_width=True)
