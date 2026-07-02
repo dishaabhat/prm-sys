@@ -2,7 +2,7 @@ import streamlit as st
 import re
 from auth import CognitoIdentityProviderWrapper
 import boto3
-from streamlit_extras.switch_page_button import switch_page
+# from streamlit_extras.switch_page_button import switch_page
 import os
 
 # # Configure AWS client
@@ -133,7 +133,7 @@ elif menu == 'Login':
                 st.success('Logged in successfully!')
                 st.session_state.username = email
                 st.session_state['logged_in'] = True
-                switch_page('Content') 
+                st.switch_page('Content') 
         except Exception as e:
             st.error(f"Error: {str(e)}")
 

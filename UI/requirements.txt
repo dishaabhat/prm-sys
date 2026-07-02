@@ -1,7 +1,6 @@
 streamlit
 boto3
 botocore
-streamlit-extras
 python-dotenv
 pandas
 openpyxl
