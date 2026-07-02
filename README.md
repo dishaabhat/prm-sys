@@ -1,6 +1,6 @@
 # 🛡️ PRM-SYS – Portfolio Risk Management System
 
-A web-based **Portfolio Risk Management System** that authenticates users using **AWS Cognito**, securely retrieves financial transaction data, analyzes spending behaviour, and generates a financial risk score with personalized recommendations.
+A web-based **Portfolio Risk Management System** prototype that authenticates users using **AWS Cognito**, securely retrieves financial transaction data, analyzes spending behaviour, and generates a financial risk score with personalized recommendations.
 
 ## 🌐 Live Demo
 
