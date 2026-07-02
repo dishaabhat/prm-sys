@@ -113,8 +113,8 @@ if menu == 'Sign Up':
 
 elif menu == 'Login':
     st.subheader('Login')
-    email = st.text_input('Email',placeholder=" Try rashmitvartak10@gmail.com")
-    password = st.text_input('Password', type='password',placeholder=" Try Rashmitv@10")
+    email = st.text_input('Email',placeholder="Try rashmitvartak10@gmail.com")
+    password = st.text_input('Password', type='password',placeholder="Try Rashmitv@10")
     st.info(
             """
         **Demo Credentials**
