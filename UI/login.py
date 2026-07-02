@@ -113,8 +113,8 @@ if menu == 'Sign Up':
 
 elif menu == 'Login':
     st.subheader('Login')
-    email = st.text_input('Email')
-    password = st.text_input('Password', type='password')
+    email = st.text_input('Email',placeholder=" Try rashmitvartak10@gmail.com")
+    password = st.text_input('Password', type='password',placeholder=" Try Rashmitv@10")
     if st.button('Login'):
         try:
             login_out = st.session_state.cog.start_sign_in(email, password)

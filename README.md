@@ -66,7 +66,7 @@ Measures spending habits relative to income.
 - Streamlit
 - AWS Cognito
 - Boto3
-- Pandas
+- Pandas 
 - Plotly
 - OpenPyXL
 
