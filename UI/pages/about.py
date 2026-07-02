@@ -1,5 +1,5 @@
 import streamlit as st
-from pages import content,home
+# from pages import content,home
 
 def display_info():
     st.title("Loan Portfolio Early Warning System")

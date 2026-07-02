@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
-import requests
 import time
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+from data_service import get_data
 
 # CSS to hide sidebar elements permanently
 hide_streamlit_style = """
@@ -59,31 +60,28 @@ def display_home():
         if st.button("Confirm and Share Data"):
             # Fetch and display the data upon final confirmation
             try:
-                response = requests.get("http://127.0.0.1:5000/get_data")
-                data = response.json()
+                data = get_data()
                 df = pd.DataFrame(data)
+
                 with st.spinner("Data is being retrieved right now..."):
                     time.sleep(3)
+
                 st.success("Consent given. Data retrieved successfully.")
                 st.write(f"Data for *{selected_bank}*:")
                 st.dataframe(df)
 
-                # Store data in session state and mark data source
                 st.session_state.file_uploaded = df
-                st.session_state.data_source = "consent"  # Track that data consent was used
+                st.session_state.data_source = "consent"
+
                 st.write("Data has been stored. You can navigate to any page to start analysis.")
-                
-                # Reset consent states
-                st.session_state.file_uploaded = df
 
                 st.session_state.initial_consent = False
                 st.session_state.final_consent = False
-                
-                # Call visualizations function
+
                 display_visualizations()
 
             except Exception as e:
-                st.error("Failed to fetch data. Please check if the backend is running.")
+                st.error(f"Unable to load transaction data.\n\n{e}")
     
     st.markdown("---")
 
