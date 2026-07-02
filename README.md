@@ -1,44 +1,82 @@
-# Risk Analysis System 
+# 🛡️ PRM-SYS – Portfolio Risk Management System
 
-## User Authentication and Risk Analysis
+A web-based **Portfolio Risk Management System** that authenticates users using **AWS Cognito**, securely retrieves financial transaction data, analyzes spending behaviour, and generates a financial risk score with personalized recommendations.
 
-Upon logging into the portal, the user undergoes authentication. After successful verification, the system initiates the risk analysis process.
+## 🌐 Live Demo
 
-## Data Analysis
+**Render Deployment:** https://prm-sys.onrender.com
 
-Utilizing data from the **Account Aggregator**, the system further analyzes user spending and savings. This analysis considers both the mode and category of payment, which are extracted from transaction descriptions.
+---
 
-## Risk Scoring
+## ✨ Features
 
-The risk is evaluated on a scale of **1 to 10**, where:
-- **1** indicates the lowest risk,
-- **10** signifies the highest risk.
+- 🔐 AWS Cognito Authentication
+- 📊 Interactive Streamlit Dashboard
+- 🏦 Consent-based Financial Data Access
+- 📈 Spending & Savings Analysis
+- 📉 Plotly Visualizations
+- 🎯 Financial Risk Score (1–10)
+- 💡 Personalized Recommendations
 
-The risk score assessment is based on three key parameters:
+---
 
-1. **Income Resilience**: This measures the stability and reliability of a user’s income over time. A higher resilience indicates a steady income source, reducing the likelihood of financial distress.
+## 🔄 Workflow
 
-2. **Risk Vigilance**: This parameter assesses the user’s awareness and proactive measures regarding potential financial risks. Users who actively monitor their finances and are cautious about their spending habits are considered more vigilant.
+1. Login using AWS Cognito.
+2. Provide consent to access financial data.
+3. Analyze transaction history.
+4. Calculate financial indicators.
+5. Generate overall risk score.
+6. Display personalized recommendations.
 
-3. **Spending Propensity**: This reflects the user’s tendency to spend money based on their financial behavior. A higher propensity indicates a greater likelihood of spending, which can increase financial risk if not managed properly.
+---
 
-The mean of these three parameters is calculated, and the risk is categorized into the following brackets:
-- **1 - 3**: Low Risk
-- **4 - 7**: Medium Risk
-- **8 - 10**: High Risk
+## 📊 Risk Parameters
 
-## Recommendations
+### Income Resilience
+Measures income stability over time.
 
-After the final risk calculation, the user receives personalized recommendations on ways to improve their risk score.
+### Risk Vigilance
+Evaluates responsible financial behaviour.
 
-## Tech Stack and Frameworks Used
+### Spending Propensity
+Measures spending habits relative to income.
 
-- **AWS Cognito**: Used for secure user login and authentication, providing a scalable and reliable method for managing user sessions and credentials.
+| Score | Category |
+|------:|----------|
+| 1–3 | 🟢 Low Risk |
+| 4–7 | 🟡 Medium Risk |
+| 8–10 | 🔴 High Risk |
 
-- **Python**: Utilized for writing scripts that calculate the risk score using defined formulas. Its versatility allows for effective implementation of the risk assessment logic.
+---
 
-- **Streamlit**: Employed for deploying the application, providing an intuitive web interface for users to interact with the risk analysis system. It facilitates easy visualization of data and results.
+## 📌 Dashboard
 
-- **Flask**: Used for handling data fetching from the **Account Aggregator**. It serves as the back-end framework, enabling the application to retrieve and process user financial data efficiently.
+- Monthly Income vs Expenses
+- Savings Rate
+- Expense Stability
+- Average Transaction Size
+- Expense Category Breakdown
 
-- **Large Language Model (LLM)**: Utilized for generating tailored recommendations based on the user's risk profile. It leverages natural language processing to provide actionable insights and guidance on improving the risk score.
+---
+
+## 🛠️ Tech Stack
+
+- Python
+- Streamlit
+- AWS Cognito
+- Boto3
+- Pandas
+- Plotly
+- OpenPyXL
+
+---
+
+## 🚀 Run Locally
+
+```bash
+git clone https://github.com/dishaabhat/prm-sys.git
+cd prm-sys/UI
+pip install -r requirements.txt
+streamlit run login.py
+```
