@@ -25,7 +25,8 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv('cred.env')
+# load_dotenv('cred.env')
+load_dotenv()
 
 # Configure AWS clients
 cognito_client = boto3.client(
