@@ -8,7 +8,7 @@ Shows how to use the AWS SDK for Python (Boto3) with Amazon Cognito to
 sign up a user, register a multi-factor authentication (MFA) application, sign in
 using an MFA code, and sign in using a tracked device.
 """
-
+import streamlit as st
 import base64
 import hashlib
 import hmac
@@ -225,14 +225,16 @@ class CognitoIdentityProviderWrapper:
                         "The user pool requires MFA setup, but the user pool is not "
                         "configured for TOTP MFA. This example requires TOTP MFA."
                     )
-        except ClientError as err:
-            logger.error(
-                "Couldn't start sign in for %s. Here's why: %s: %s",
-                user_name,
-                err.response["Error"]["Code"],
-                err.response["Error"]["Message"],
-            )
-            raise
+
+        except ClientError as e:
+            code = e.response["Error"]["Code"]
+
+            if code == "NotAuthorizedException":
+                st.error("Incorrect email or password.")
+            elif code == "UserNotConfirmedException":
+                st.error("Please verify your email before logging in.")
+            else:
+                st.error("Authentication failed.")
         else:
             response.pop("ResponseMetadata", None)
             return response

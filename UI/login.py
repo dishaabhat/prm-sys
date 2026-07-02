@@ -2,47 +2,36 @@ import streamlit as st
 import re
 from auth import CognitoIdentityProviderWrapper
 import boto3
-# from streamlit_extras.switch_page_button import switch_page
 import os
-
-# # Configure AWS client
-# cognito_client = boto3.client(
-#     'cognito-idp',
-#     region_name='us-east-1',
-#     aws_access_key_id=AWS_ACCESS_KEY,
-#     aws_secret_access_key=AWS_SECRET_KEY
-# )
-
-# # Initialize the CognitoIdentityProviderWrapper in session state
-# if 'cog' not in st.session_state:
-#     st.session_state.cog = CognitoIdentityProviderWrapper(
-#         cognito_idp_client=cognito_client,
-#         user_pool_id=USER_POOL_ID,
-#         client_id=CLIENT_ID,
-#         client_secret=CLIENT_SECRET
-#     )
-
 from dotenv import load_dotenv
 
+from config import (
+    AWS_REGION,
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    USER_POOL_ID,
+    CLIENT_ID,
+    CLIENT_SECRET,
+)
+
 # Load environment variables
-# load_dotenv('cred.env')
 load_dotenv()
 
 # Configure AWS clients
 cognito_client = boto3.client(
     'cognito-idp',
-    region_name='us-east-1',
-    aws_access_key_id=os.getenv("S3_AWS_ACCESS_KEY"),
-    aws_secret_access_key=os.getenv("S3_AWS_SECRET_KEY")
+    region_name=AWS_REGION,
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY
 )
 
 # Initialize the CognitoIdentityProviderWrapper in session state
 if 'cog' not in st.session_state:
     st.session_state.cog = CognitoIdentityProviderWrapper(
         cognito_idp_client=cognito_client,
-        user_pool_id=os.getenv("USER_POOL_ID"),
-        client_id=os.getenv("CLIENT_ID"),
-        client_secret=os.getenv("CLIENT_SECRET")
+        user_pool_id=USER_POOL_ID,
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET
     )
 
 # To hide sidebar items for safety of login and sign up
@@ -133,7 +122,7 @@ elif menu == 'Login':
                 st.success('Logged in successfully!')
                 st.session_state.username = email
                 st.session_state['logged_in'] = True
-                st.switch_page('pages/content') 
+                st.switch_page('pages/content.py') 
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
